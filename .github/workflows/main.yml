@@ -28,3 +28,22 @@ jobs:
           echo 2: ${GITHUB_BASE_REF}
           echo 3: ${GITHUB_HEAD_REF}
           
+      - name: Get Git Details
+        id: git_info
+        run: |
+          if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then
+            echo "::set-output name=branch::$(echo ${GITHUB_REF_NAME} | tr / -)"
+            echo "::set-output name=sha::${{github.event.after}}"
+            echo "::set-output name=base_sha::${{github.event.before}}"
+            echo "Main Branch: $(echo ${GITHUB_REF_NAME} | tr / -)"
+            TAG = ${{github.event.after}}
+          else
+            echo "::set-output name=branch::$(echo ${GITHUB_HEAD_REF}  | tr / -)"
+            echo "::set-output name=sha::${{github.event.pull_request.head.sha}}"
+            echo "::set-output name=base_sha::${{github.event.pull_request.base.sha}}"
+            echo "Feature Branch: $(echo ${GITHUB_REF_NAME} | tr / -)"
+            TAG = TAG="${{github.event.pull_request.head.sha}}.beta.$(echo ${GITHUB_HEAD_REF}  | tr / -)"
+          fi
+          echo "::set-output name=new_tag::${TAG}"
+          echo ${TAG}
+          
