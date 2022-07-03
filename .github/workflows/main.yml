@@ -28,7 +28,7 @@ jobs:
           echo 1: ${GITHUB_REF_NAME}
           echo 2: ${GITHUB_BASE_REF}
           echo 3: ${GITHUB_HEAD_REF}
-          echo 4: ${{github.event.pullrequest.action}}
+          echo 4: ${{github.event.pull_request.action}}
           
       - name: Get Git Details
         id: git_info
