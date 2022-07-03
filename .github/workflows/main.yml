@@ -33,7 +33,7 @@ jobs:
         run: |
           if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then
             echo "::set-output name=branch::$(echo ${GITHUB_REF_NAME} | tr / -)"
-            echo "::set-output name=sha::${{github.event.after}}"
+            echo "::set-output name=sha::${{github.event.pull_request.after.sha}}"
             echo "::set-output name=base_sha::${{github.event.before}}"
             echo "Main Branch: $(echo ${GITHUB_REF_NAME} | tr / -)"
             TAG=${{github.event.after}}
