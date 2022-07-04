@@ -1,4 +1,6 @@
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize, closed ]
@@ -11,7 +13,6 @@ on:
 
 jobs:
   checkvars:
-    # if: ${{ github.event.pull_request.merged == true  }}
     name: Check Env Vars
     runs-on: ubuntu-latest
     steps:
@@ -34,6 +35,10 @@ jobs:
         id: git_info
         run: |
           if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then
+            if [[ ${{ github.event.pull_request.merged != true  }} ]]; then
+              echo "This was a closed PR, I think"
+              exit(0)
+            fi
             echo "::set-output name=branch::$(echo ${GITHUB_REF_NAME} | tr / -)"
             echo "::set-output name=sha::${{github.sha}}"
             echo "::set-output name=base_sha::${{github.event.before}}"
