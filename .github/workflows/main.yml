@@ -1,6 +1,4 @@
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize, closed ]
@@ -10,11 +8,12 @@ on:
 #echo 2: ${GITHUB_REF_NAME} # github pseudo 'merge' branch
 #echo 3: ${GITHUB_BASE_REF} # github target branch (main)
 #echo 4: ${GITHUB_HEAD_REF} # github source branch (feature)
-
+#   echo 5: ${{toJSON(github.event.pull_request)}}
 jobs:
   checkvars:
     name: Check Env Vars
     runs-on: ubuntu-latest
+#    if: ${{ (github.event.pull_request.state == "open") || (github.event.pull_request.state != "open" && github.event.pull_request.merged)  }}
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -28,17 +27,21 @@ jobs:
         run: | 
           echo 1: ${GITHUB_REF_NAME}
           echo 2: ${GITHUB_BASE_REF}
-          echo 3: ${GITHUB_HEAD_REF}
-          echo 4: ${{github.event.pull_request.action}}
-          
+          echo 3: ${GITHUB_HEAD_REF} 
+          echo 4: ${{github.event.pull_request.state}}
+      
       - name: Get Git Details
         id: git_info
         run: |
-          if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then
-            if [[ ${{ github.event.pull_request.merged != true  }} ]]; then
-              echo "This was a closed PR, I think"
+          if [[ "${{ github.event.pull_request.state }}" != "open" ]]; then
+            echo "This PR is not open"
+            if [[ "${{github.event.pull_request.merged}}" != "true" ]]; then
+              echo "this PR was not merged"
               exit 0
             fi
+            echo "This PR was merged to main, continuing."
+          fi
+          if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then           
             echo "::set-output name=branch::$(echo ${GITHUB_REF_NAME} | tr / -)"
             echo "::set-output name=sha::${{github.sha}}"
             echo "::set-output name=base_sha::${{github.event.before}}"
