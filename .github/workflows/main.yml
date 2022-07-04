@@ -1,6 +1,4 @@
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize, closed ]
@@ -35,7 +33,7 @@ jobs:
         id: git_info
         run: |
           if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then
-            if [[ ${{ github.event.pull_request.merged != true  }} ]]; then
+            if [[ "${{ github.event.pull_request.merged }}" != true ]]; then
               echo "This was a closed PR, I think"
               exit 0
             fi
