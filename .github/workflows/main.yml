@@ -37,7 +37,7 @@ jobs:
           if [[ ${GITHUB_REF_NAME} == ${GITHUB_BASE_REF} ]]; then
             if [[ ${{ github.event.pull_request.merged != true  }} ]]; then
               echo "This was a closed PR, I think"
-              exit(0)
+              exit 0
             fi
             echo "::set-output name=branch::$(echo ${GITHUB_REF_NAME} | tr / -)"
             echo "::set-output name=sha::${{github.sha}}"
