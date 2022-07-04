@@ -33,7 +33,7 @@ jobs:
       - name: Get Git Details
         id: git_info
         run: |
-          if [[ ${{ github.event.pull_request.state }} != "open" ]] then
+          if [[ "${{ github.event.pull_request.state }}" != "open" ]] then
             echo "This PR is not open"
             if [[ ${{github.event.pull_request.merged}} != "true" ]] then
               echo "this PR was not merged"
